@@ -31,21 +31,24 @@ def save_device_info_to_file(devices: Dict[str, str]) -> None:
 # 初始化设备信息
 device_info: Dict[str, str] = load_device_info()
 
+# 全局变量存储广播地址
+broadcast_address = "255.255.255.255"
+
 async def wake_device_on_lan(
     mac_address: str
 ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
     # 校验mac_address
     if not re.match(r'^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$', mac_address):
         raise ValueError("Invalid MAC address format")
+    
     # 将MAC地址转换为二进制格式
     mac_bytes = bytes.fromhex(mac_address.replace('-', '').replace(':', ''))
     # 发送wake-on-lan包
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    sock.sendto(b'\xff' * 6 + mac_bytes * 16, ('255.255.255.255', 9))
+    sock.sendto(b'\xff' * 6 + mac_bytes * 16, (broadcast_address, 9))
     sock.close()
-    return [types.TextContent(type="text", text="Wake-on-LAN packet sent successfully")]
-    
+    return [types.TextContent(type="text", text=f"Wake-on-LAN packet sent successfully to {broadcast_address}")]
 
 async def save_device_info(
     mac_address: str,
@@ -67,7 +70,6 @@ async def save_device_info(
     action = "更新" if is_update else "保存"
     return [types.TextContent(type="text", text=f"成功{action}设备信息：{device_name} ({mac_address})")]
 
-
 async def list_devices() -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
     if not device_info:
         return [types.TextContent(type="text", text="当前没有保存任何设备信息")]
@@ -78,7 +80,6 @@ async def list_devices() -> list[types.TextContent | types.ImageContent | types.
         device_list.append(f"- {name} ({mac_address})")
     
     return [types.TextContent(type="text", text="\n".join(device_list))]
-
 
 async def delete_device(
     mac_address: str
@@ -100,7 +101,6 @@ async def delete_device(
     
     return [types.TextContent(type="text", text=f"成功删除设备记录：{device_name} ({mac_address})")]
 
-
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
@@ -109,7 +109,15 @@ async def delete_device(
     default="stdio",
     help="Transport type",
 )
-def main(port: int, transport: str) -> int:
+@click.option(
+    "--broadcast-addr",
+    default="255.255.255.255",
+    help="Default broadcast address for Wake-on-LAN packets",
+)
+def main(port: int, transport: str, broadcast_addr: str) -> int:
+    global broadcast_address
+    broadcast_address = broadcast_addr
+
     app = Server("mcp-wake-on-lan")
 
     @app.call_tool()

@@ -34,5 +34,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Expose port 8000
 EXPOSE 8000
 
-# when running the container, add --db-path and a bind mount to the host's db file
+# when running the container, add --broadcast-addr to the command line
 ENTRYPOINT ["mcp-wake-on-lan", "--transport", "sse"]
