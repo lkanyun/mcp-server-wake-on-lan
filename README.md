@@ -70,4 +70,48 @@ Add the following configuration to Claude Desktop:
   }
 }
 ```
+### Docker Deployment
 
+#### Docker Run
+
+```bash
+docker run -d --network host lkanyun/mcp-server-wake-on-lan --broadcast-addr 192.168.1.255
+```
+
+#### Docker Compose
+
+Create a `docker-compose.yml` file:
+
+```yaml
+version: '3'
+services:
+  mcp-wake-on-lan:
+    image: lkanyun/mcp-server-wake-on-lan
+    network_mode: host
+    volumes:
+      - /your_path:/root/.config/mcp-wake-on-lan
+    command:
+      - --broadcast-addr
+      - 192.168.1.255
+    restart: unless-stopped
+```
+
+Run:
+
+```bash
+docker compose up -d
+```
+
+Note: `network_mode: host` is required to ensure Wake-on-LAN magic packets can be properly sent to the local network.
+
+#### Config on Claude Desktop
+``` json
+{
+  "mcpServers": {
+    "mcp-server-wake-on-lan": {
+      "type": "sse",
+      "url": "http://yourip:8000/sse"
+    }
+  }
+}
+```
