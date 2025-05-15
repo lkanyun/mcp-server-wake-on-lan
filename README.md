@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Model Context Protocol (MCP) server that allows you to remotely wake up devices on your local network. This MCP server is intentionally designed to be simple, straightforward, and requires minimal setup. The core implementation is less than 100 lines of code.
+A Model Context Protocol (MCP) server that allows you to remotely wake up devices on your local network. This MCP server is intentionally designed to be simple, straightforward, and requires minimal setup. 
 
 ## Features
 
@@ -59,13 +59,12 @@ Add the following configuration to Claude Desktop:
 ```json
 {
   "mcpServers": {
-    "wake_on_lans": {
-      "command": "uv",
+    "mcp-wake-on-lan": {
+      "command": "uvx",
       "args": [
-        "--directory",
-        "/path/to/your/repo",
-        "run",
-        "mcp-wake-on-lan"
+        "mcp-wake-on-lan",
+        "--broadcast-addr",
+        "192.168.1.255"
       ]
     }
   }

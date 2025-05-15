@@ -155,7 +155,7 @@ def main(port: int, transport: str, broadcast_addr: str) -> int:
             ),
             types.Tool(
                 name="save_device_info",
-                description="Save or update device information",
+                description="Save or update device name and MAC address mapping",
                 inputSchema={
                     "type": "object",
                     "required": ["mac_address", "device_name"],
@@ -173,7 +173,7 @@ def main(port: int, transport: str, broadcast_addr: str) -> int:
             ),
             types.Tool(
                 name="list_devices",
-                description="List all saved devices",
+                description="List all saved device names and MAC addresses.",
                 inputSchema={
                     "type": "object",
                     "properties": {},
@@ -222,7 +222,7 @@ def main(port: int, transport: str, broadcast_addr: str) -> int:
 
         import uvicorn
 
-        uvicorn.run(starlette_app, host="::", port=port)
+        uvicorn.run(starlette_app, host="0.0.0.0", port=port)
     else:
         from mcp.server.stdio import stdio_server
 
