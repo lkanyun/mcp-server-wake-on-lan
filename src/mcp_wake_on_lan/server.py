@@ -222,7 +222,7 @@ def main(port: int, transport: str, broadcast_addr: str) -> int:
 
         import uvicorn
 
-        uvicorn.run(starlette_app, host="0.0.0.0", port=port)
+        uvicorn.run(starlette_app, host="::", port=port)
     else:
         from mcp.server.stdio import stdio_server
 
