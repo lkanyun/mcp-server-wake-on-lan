@@ -141,14 +141,14 @@ def main(port: int, transport: str, broadcast_addr: str) -> int:
         return [
             types.Tool(
                 name="wake_device",
-                description="Wake up a device by sending a Wake-on-LAN (WOL) magic packet",
+                description="Wake up a device by sending a Wake-on-LAN (WOL) magic packet. If you don't know the MAC address, use the list_devices command first to find the device information",
                 inputSchema={
                     "type": "object",
                     "required": ["mac_address"],
                     "properties": {
                         "mac_address": {
                             "type": "string",
-                            "description": "The MAC address of the device to wake up",
+                            "description": "The MAC address of the device to wake up. If you don't know the MAC address, use list_devices command to check saved devices",
                         }
                     },
                 },
